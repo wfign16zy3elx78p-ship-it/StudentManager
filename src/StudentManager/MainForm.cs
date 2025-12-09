@@ -14,14 +14,14 @@ namespace StudentManager
         private List<Student> students = new List<Student>();
         private Student selectedStudent = null;
 
-        // DÙNG TextBox thường để gõ tiếng Việt
+        // DÙNG TextBox để gõ tiếng Việt
         private TextBox txtId, txtName, txtClass, txtScore, txtSearch;
         private DataGridView dgvStudents;
         private MaterialLabel lblTotal, lblPass, lblAvg;
+        private ComboBox cmbGender; 
 
         public MainForm()
         {
-            // Không dùng InitializeComponent()
             SetupMaterialSkin();
             InitializeUI();
             RefreshDataGridView();
@@ -55,13 +55,24 @@ namespace StudentManager
             // Panel nhập liệu
             var inputPanel = new Panel { Location = new System.Drawing.Point(20, 80), Size = new System.Drawing.Size(820, 120) };
 
-            // --- TextBox thường (hỗ trợ tiếng Việt) ---
+            //TextBox thường
             txtId = CreateTextBox("Mã SV", new System.Drawing.Point(10, 10), 150);
-            txtName = CreateTextBox("Họ và tên", new System.Drawing.Point(180, 10), 220);
-            txtClass = CreateTextBox("Lớp", new System.Drawing.Point(420, 10), 120);
-            txtScore = CreateTextBox("Điểm (0-10)", new System.Drawing.Point(560, 10), 120);
+            txtName = CreateTextBox("Họ và tên", new System.Drawing.Point(170, 10), 220);
 
-            // Button (vẫn dùng MaterialButton)
+            // 👇 THÊM COMBOBOX GIỚI TÍNH
+            cmbGender = new ComboBox
+            {
+                Location = new System.Drawing.Point(400, 10),
+                Width = 120,
+                Font = new System.Drawing.Font("Arial", 10)
+            };
+            cmbGender.Items.AddRange(new string[] { "Nam", "Nữ", "Khác" });
+            cmbGender.SelectedIndex = 0; // Mặc định chọn "Nam"
+
+            txtClass = CreateTextBox("Lớp", new System.Drawing.Point(530, 10), 120);
+            txtScore = CreateTextBox("Điểm (0-10)", new System.Drawing.Point(660, 10), 120);
+
+            // Button
             var btnAdd = new MaterialButton { Text = "Thêm", Location = new System.Drawing.Point(10, 60), Width = 90, Height = 40 };
             var btnEdit = new MaterialButton { Text = "Cập nhật", Location = new System.Drawing.Point(110, 60), Width = 90, Height = 40 };
             var btnDelete = new MaterialButton { Text = "Xóa", Location = new System.Drawing.Point(210, 60), Width = 90, Height = 40 };
@@ -71,7 +82,7 @@ namespace StudentManager
             var btnSearch = new MaterialButton { Text = "Tìm", Location = new System.Drawing.Point(670, 60), Width = 80, Height = 40 };
 
             inputPanel.Controls.AddRange(new Control[] {
-                txtId, txtName, txtClass, txtScore,
+                txtId, txtName, txtClass, txtScore,cmbGender,
                 btnAdd, btnEdit, btnDelete, btnClear,
                 txtSearch, btnSearch
             });
@@ -87,11 +98,11 @@ namespace StudentManager
                 Font = vietFont
             };
 
-            // Panel hành động
+            // bảng hành động
             var actionPanel = new Panel { Location = new System.Drawing.Point(20, 460), Size = new System.Drawing.Size(820, 60) };
             var btnSave = new MaterialButton { Text = "Lưu file", Location = new System.Drawing.Point(10, 10), Width = 100 };
             var btnLoad = new MaterialButton { Text = "Mở file", Location = new System.Drawing.Point(120, 10), Width = 100 };
-            var btnSort = new MaterialButton { Text = "Sắp xếp ↓", Location = new System.Drawing.Point(230, 10), Width = 110 };
+            var btnSort = new MaterialButton { Text = "Sắp xếp ", Location = new System.Drawing.Point(230, 10), Width = 110 };
             var btnAverage = new MaterialButton { Text = "Điểm TB", Location = new System.Drawing.Point(350, 10), Width = 100 };
             var btnStatistic = new MaterialButton { Text = "Thống kê", Location = new System.Drawing.Point(460, 10), Width = 100 };
 
@@ -106,7 +117,7 @@ namespace StudentManager
 
             Controls.AddRange(new Control[] {  inputPanel, dgvStudents, actionPanel });
 
-            // Gắn sự kiện
+            // gắn event
             btnAdd.Click += btnAdd_Click;        // SV1
             btnEdit.Click += btnEdit_Click;      // SV1
             btnDelete.Click += btnDelete_Click;  // SV2
@@ -121,7 +132,7 @@ namespace StudentManager
             dgvStudents.CellClick += dgvStudents_CellClick;
         }
 
-        // Helper: Tạo TextBox có placeholder
+        // text box có place holder
         private TextBox CreateTextBox(string placeholder, System.Drawing.Point location, int width)
         {
             var txt = new TextBox
@@ -129,10 +140,11 @@ namespace StudentManager
                 Location = location,
                 Width = width,
                 Font = new System.Drawing.Font("Arial", 10),
-                ImeMode = ImeMode.On // ← Cho phép gõ tiếng Việt có dấu
+                ImeMode = ImeMode.On //tiếng việt
+
             };
 
-            // Hiệu ứng placeholder
+            // nháy đen 
             txt.Text = placeholder;
             txt.ForeColor = System.Drawing.Color.Gray;
 
@@ -157,19 +169,35 @@ namespace StudentManager
             return txt;
         }
 
-        // === HÀM HỖ TRỢ ===
+        // hỗ trợ 
         private void RefreshDataGridView()
         {
             dgvStudents.Rows.Clear();
             dgvStudents.Columns.Clear();
             dgvStudents.Columns.Add("Id", "Mã SV");
             dgvStudents.Columns.Add("Name", "Họ tên");
+            dgvStudents.Columns.Add("Gender", "Giới tính");
             dgvStudents.Columns.Add("Class", "Lớp");
             dgvStudents.Columns.Add("Score", "Điểm");
             dgvStudents.Columns.Add("Status", "Trạng thái");
 
+            // fill weight dễ cân 
+            dgvStudents.Columns["Id"].FillWeight = 20;        // Hẹp
+            dgvStudents.Columns["Name"].FillWeight = 25;      // Rộng 
+            dgvStudents.Columns["Gender"].FillWeight = 10;
+            dgvStudents.Columns["Class"].FillWeight = 15;
+            dgvStudents.Columns["Score"].FillWeight = 10;
+            dgvStudents.Columns["Status"].FillWeight = 15;
+
+            // fill all
+            foreach (DataGridViewColumn col in dgvStudents.Columns)
+            {
+                col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
             foreach (var s in students)
-                dgvStudents.Rows.Add(s.Id, s.Name, s.Class, s.Score.ToString("F1"), s.Status);
+            {
+                dgvStudents.Rows.Add(s.Id, s.Name, s.Gender, s.Class, s.Score.ToString("F1"), s.Status);
+            }
         }
 
         private void UpdateStatistics()
@@ -182,12 +210,13 @@ namespace StudentManager
             lblAvg.Text = $"TB: {avg:F2}";
         }
 
-        private bool ValidateInput(out string id, out string name, out string cls, out double score)
+        private bool ValidateInput(out string id, out string name, out string cls,out string gender, out double score)
         {
             id = GetRealText(txtId, "Mã SV");
             name = GetRealText(txtName, "Họ và tên");
             cls = GetRealText(txtClass, "Lớp");
             string scoreStr = GetRealText(txtScore, "Điểm (0-10)");
+            gender = cmbGender.SelectedItem?.ToString() ?? "Nam";
 
             if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(cls) || string.IsNullOrEmpty(scoreStr))
             {
@@ -205,19 +234,19 @@ namespace StudentManager
             return true;
         }
 
-        // Lấy nội dung thật (bỏ placeholder)
+        // nd bỏ placeholder 
         private string GetRealText(TextBox txt, string placeholder)
         {
             string value = txt.Text;
             return value == placeholder ? "" : value.Trim();
         }
 
-        // === 10 SỰ KIỆN THEO PHÂN CÔNG NHÓM ===
+        // event theo phân công 
         private void btnAdd_Click(object sender, EventArgs e) // SV1
         {
-            if (!ValidateInput(out string id, out string name, out string cls, out double score)) return;
+            if (!ValidateInput(out string id, out string name, out string cls,out string gender, out double score)) return;
             if (students.Any(s => s.Id == id)) { MessageBox.Show("Mã SV đã tồn tại!"); return; }
-            students.Add(new Student { Id = id, Name = name, Class = cls, Score = score });
+            students.Add(new Student { Id = id, Name = name, Class = cls, Score = score, Gender = gender });
             RefreshDataGridView(); UpdateStatistics(); btnClear_Click(null, null);
             MessageBox.Show("Thêm sinh viên thành công!");
         }
@@ -225,12 +254,13 @@ namespace StudentManager
         private void btnEdit_Click(object sender, EventArgs e) // SV1
         {
             if (selectedStudent == null) { MessageBox.Show("Vui lòng chọn sinh viên để sửa!"); return; }
-            if (!ValidateInput(out string id, out string name, out string cls, out double score)) return;
+            if (!ValidateInput(out string id, out string name, out string cls,out string gender, out double score)) return;
             if (id != selectedStudent.Id && students.Any(s => s.Id == id)) { MessageBox.Show("Mã SV đã tồn tại!"); return; }
             selectedStudent.Id = id;
             selectedStudent.Name = name;
             selectedStudent.Class = cls;
             selectedStudent.Score = score;
+            selectedStudent.Gender = gender;
             RefreshDataGridView(); UpdateStatistics(); btnClear_Click(null, null);
             MessageBox.Show("Cập nhật thành công!");
         }
@@ -251,7 +281,7 @@ namespace StudentManager
                 s.Name.ToLower().Contains(k) || s.Class.ToLower().Contains(k)).ToList();
             dgvStudents.Rows.Clear();
             foreach (var s in filtered)
-                dgvStudents.Rows.Add(s.Id, s.Name, s.Class, s.Score.ToString("F1"), s.Status);
+                dgvStudents.Rows.Add(s.Id, s.Name,s.Gender, s.Class, s.Score.ToString("F1"), s.Status);
         }
 
         private void btnSave_Click(object sender, EventArgs e) // SV3
@@ -264,7 +294,7 @@ namespace StudentManager
                     {
                         using (var w = new StreamWriter(sfd.FileName, false, System.Text.Encoding.UTF8))
                             foreach (var s in students)
-                                w.WriteLine($"{s.Id},{s.Name},{s.Class},{s.Score}");
+                                w.WriteLine($"{s.Id},{s.Name},{s.Gender},{s.Class},{s.Score}");
                         MessageBox.Show("Lưu file thành công!");
                     }
                     catch (Exception ex)
@@ -288,8 +318,18 @@ namespace StudentManager
                         {
                             if (string.IsNullOrWhiteSpace(line)) continue;
                             var p = line.Split(',');
-                            if (p.Length == 4 && double.TryParse(p[3], out double sc))
-                                students.Add(new Student { Id = p[0].Trim(), Name = p[1].Trim(), Class = p[2].Trim(), Score = sc });
+                            var parts = line.Split(','); 
+                            if (parts.Length == 5 && double.TryParse(parts[4], out double sc))
+                            {
+                                students.Add(new Student
+                                {
+                                    Id = parts[0].Trim(),
+                                    Name = parts[1].Trim(),
+                                    Gender = parts[2].Trim(),
+                                    Class = parts[3].Trim(),
+                                    Score = sc
+                                });
+                            }
                         }
                         RefreshDataGridView(); UpdateStatistics();
                         MessageBox.Show("Mở file thành công!");
@@ -348,7 +388,7 @@ namespace StudentManager
                     txtName.Text = selectedStudent.Name;
                     txtClass.Text = selectedStudent.Class;
                     txtScore.Text = selectedStudent.Score.ToString("F1");
-                    // Đặt màu đen để phân biệt với placeholder
+                    // màu đen placeholder 
                     txtId.ForeColor = txtName.ForeColor = txtClass.ForeColor = txtScore.ForeColor = System.Drawing.Color.Black;
                 }
             }

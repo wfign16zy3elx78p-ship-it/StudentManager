@@ -6,7 +6,8 @@
         public string Name { get; set; }
         public string Class { get; set; }
         public double Score { get; set; }
-
+        public string Gender { get; set; } 
         public string Status => Score >= 5.0 ? "Đạt" : "Không đạt";
     }
+
 }
