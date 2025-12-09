@@ -4,7 +4,7 @@
 
 Môn học: Introduction to Software Engineering – CMU SE100 2025  
 
-Nhóm 2:Huỳnh Huy Cường ,Hồ Ngọc Hải,Trần Viết Hòa
+Nhóm 2:Huỳnh Huy Cường ,Hồ Ngọc Hải,Vo Viết Hòa
 
 
 
