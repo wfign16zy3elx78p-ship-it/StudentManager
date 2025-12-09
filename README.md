@@ -8,7 +8,7 @@ Nhóm: \[Tên nhóm của bạn]
 
 
 
-\## 📌 Mô tả
+\##  Mô tả
 
 Ứng dụng quản lý thông tin sinh viên bằng C# Windows Forms, hỗ trợ:
 
@@ -22,9 +22,9 @@ Nhóm: \[Tên nhóm của bạn]
 
 
 
-\## 🛠️ Công nghệ
+\## Công nghệ
 
-\- C# (.NET Framework 4.7.2)
+\- C# (.NET Framework 4.8)
 
 \- Windows Forms
 
@@ -32,7 +32,7 @@ Nhóm: \[Tên nhóm của bạn]
 
 
 
-\## 📂 Cấu trúc
+\##  Cấu trúc
 
 \- `src/` – Mã nguồn
 
@@ -42,7 +42,7 @@ Nhóm: \[Tên nhóm của bạn]
 
 
 
-\## 🚀 Cách chạy
+\##  Cách chạy
 
 1\. Mở `StudentManager.sln` bằng Visual Studio 2022
 
